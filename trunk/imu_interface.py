@@ -13,7 +13,7 @@ class IMUDataIOError(IOError):
 
 class IMU(object):
   def __init__(self,device = '/dev/ttyUSB0',log_file = 'IMUoutput.txt'):
-    log = open('log_file','w');
+    self.log = open(log_file,'w')
     self.dev = serial.Serial(device, 38400, timeout=1)
     self.alive = False
     self.dev.flushOutput()
@@ -39,7 +39,7 @@ class IMU(object):
       while self.alive:
         data = self.dev.readline()
         sys.stdout.write(data)
-        pass
+        self.log.write(data)
     except serial.SerialException:
       self.alive = False
       raise IMUDataIOError
