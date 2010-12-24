@@ -9,16 +9,30 @@ class IMUConnectError(Exception):
   
 class IMUDataIOError(IOError):
   def __init__(self):
-    print 'Could not read/write data to IMU...'
+    print 'Could not read/write data to IMU...\nCheck connections or restart the IMU'
 
 class IMU(object):
-  def __init__(self,device = '/dev/ttyUSB0',log_file = 'IMUoutput.txt'):
+  def __init__(self,device = '',log_file = 'IMUoutput.txt'):
+    
+    if device == '':
+      device = self.scan_device()
+   
     self.log = open(log_file,'w')
     self.dev = serial.Serial(device, 38400, timeout=1)
     self.alive = False
     self.dev.flushOutput()
     self.dev.flushInput()
     
+  def scan_device(self):
+    print 'No Arguments provided...\nScanning for device...\n'
+    for i in range(11):
+      dev = '/dev/ttyUSB'+str(i)
+      if os.path.exists(dev):
+        print 'Found IMU: '+ dev
+        break
+    if i == 10:
+      raise IMUConnectError
+
   def start(self):
     self.alive = True
     #Rx thread
@@ -63,17 +77,9 @@ class IMU(object):
       raise IMUDataIOError
     
 if __name__ == '__main__':
-  dev = '/dev/ttyUSB0'
   try:
-    for i in range(11):
-      dev = '/dev/ttyUSB'+str(i)
-      if os.path.exists(dev):
-        break
-    if i == 10:
-      raise Exception
-  except Exception:
-    raise IMUConnectError
-    exit()
-    
-  imu=IMU(dev)
+    if sys.argv[1]:
+      imu=IMU(device=sys.argv[1])
+  except IndexError:
+    imu=IMU()
   imu.start()
