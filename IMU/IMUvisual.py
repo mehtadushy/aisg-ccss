@@ -54,8 +54,8 @@ class IMUvisual(object):
       pastpos=prespos
       #print val
         
-      #for i in range(3):
-      self.pointer.rotate(angle=val[1],axis=self.axis[1],origin=(0,0,0))
+      for i in range(3):
+        self.pointer.rotate(angle=val[i],axis=self.axis[i],origin=(0,0,0))
        
 if __name__ == '__main__':
   vis = IMUvisual()

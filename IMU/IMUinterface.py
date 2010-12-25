@@ -17,14 +17,14 @@ class IMU(object):
     NULL = open('/dev/null','w+')
     self.input = sys.stdin
     self.output = sys.stdout
-    #Uncomment below to see the output on stdout
+    #comment below to see the output on stdout
     self.output = NULL
     self.current_reading = ''
     
     if device == '': device = self.scan_device()
     
     self.log = open(log_file,'w')
-    self.dev = serial.Serial(device, 38400, timeout=1)
+    self.dev = serial.Serial(device, 57600, timeout=1)
     self.alive = False
     self.dev.flushOutput()
     self.dev.flushInput()
