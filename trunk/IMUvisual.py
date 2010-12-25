@@ -17,7 +17,7 @@ class IMUvisual(object):
     self.imu.dev.write('4')
     
   def init_3d(self):
-    self.pointer = visual.arrow(pos=(0,0,0), axis=(1,0,0), shaftwidth=0.5)
+    self.pointer = visual.arrow(pos=(-0.5,0,0), axis=(1,0,0), shaftwidth=0.5,fixedwidth=1)
     self.axis = [(1,0,0),(0,1,0),(0,0,1)]
   
   def start_3d(self):
@@ -31,9 +31,10 @@ class IMUvisual(object):
         
       def rot(past,pres):
         v=[0,0,0]
-        v[0]=pres[0]-past[0]
-        v[1]=pres[1]-past[1]
-        v[2]=pres[2]-past[2]
+        d=visual.pi*10
+        v[0]=(pres[0]-past[0])/d
+        v[1]=(pres[1]-past[1])/d
+        v[2]=(pres[2]-past[2])/d
         return v
       
       val=[0,0,0]
@@ -48,7 +49,7 @@ class IMUvisual(object):
         print val
         
         for i in range(3):
-          self.pointer.rotate(angle=val[i]/
-          visual.pi,axis=self.axis[i])
+          self.pointer.rotate(angle=val[i],axis=self.axis[i],origin=(0,0,0))
        
-vis = IMUvisual()
+if __name__ == '__main__':
+  vis = IMUvisual()
