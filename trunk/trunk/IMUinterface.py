@@ -5,18 +5,24 @@ import serial
 
 class IMUConnectError(Exception):
   def __init__(self):
-    print 'Could not find the IMU on the serial port... \nCheck the device or provide the absolute path to the device as an argument...\n'
+    sys.stderr.write('Could not find the IMU on the serial port... \nCheck the device or provide the absolute path to the device as an argument...\n')
   
 class IMUDataIOError(IOError):
   def __init__(self):
-    print 'Could not read/write data to IMU...\nCheck connections or restart the IMU'
+    sys.stderr.write('Could not read/write data to IMU...\nCheck connections or restart the IMU')
 
 class IMU(object):
   def __init__(self,device = '',log_file = 'IMUoutput.txt'):
     
-    if device == '':
-      device = self.scan_device()
-   
+    NULL = open('/dev/null','w+')
+    self.input = sys.stdin
+    self.output = sys.stdout
+    #Uncomment below to see the output on stdout
+    self.output = NULL
+    self.current_reading = ''
+    
+    if device == '': device = self.scan_device()
+    
     self.log = open(log_file,'w')
     self.dev = serial.Serial(device, 38400, timeout=1)
     self.alive = False
@@ -24,14 +30,14 @@ class IMU(object):
     self.dev.flushInput()
     
   def scan_device(self):
-    print 'No Arguments provided...\nScanning for device...\n'
+    sys.stderr.write('No Arguments provided...\nScanning for device...\n')
     for i in range(11):
       dev = '/dev/ttyUSB'+str(i)
       if os.path.exists(dev):
-        print 'Found IMU: '+ dev
+        sys.stderr.write('Found IMU: '+ dev+ '\n')
         break
-    if i == 10:
-      raise IMUConnectError
+    if i == 10: raise IMUConnectError
+    return dev
 
   def start(self):
     self.alive = True
@@ -52,7 +58,9 @@ class IMU(object):
     try:
       while self.alive:
         data = self.dev.readline()
-        sys.stdout.write(data)
+        if data == '': continue
+        self.output.write(data)
+        self.current_reading = data
         self.log.write(data)
     except serial.SerialException:
       self.alive = False
@@ -64,13 +72,12 @@ class IMU(object):
   def write(self):
     try:
       while self.alive:
-        data = sys.stdin.read(1)
+        data = self.input.read(1)
         try:
-          if data == 'c':
-            self.stop()
+          if data == 'c': self.stop()
+          if data == 'r': self.dev.write('\n')
           data=int(data)
-        except:
-          continue
+        except: continue
         self.dev.write(str(data))
     except serial.SerialException:
       self.alive = False
@@ -80,6 +87,6 @@ if __name__ == '__main__':
   try:
     if sys.argv[1]:
       imu=IMU(device=sys.argv[1])
-  except IndexError:
+  except Exception:
     imu=IMU()
   imu.start()
