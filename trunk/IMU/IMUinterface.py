@@ -18,7 +18,7 @@ class IMU(object):
     self.input = sys.stdin
     self.output = sys.stdout
     #comment below to see the output on stdout
-    self.output = NULL
+    #self.output = NULL
     self.current_reading = ''
     
     if device == '': device = self.scan_device()
