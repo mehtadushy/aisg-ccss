@@ -193,7 +193,6 @@ LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 
 #---------------- Programming Options (avrdude serial bootloader) ----------------
 
-#"C:\arduino\hardware\tools\avr\bin\avrdude" -PCOM3 -c stk500v1 -patmega168 -b19200 -Uflash:w:Simon-PTH-v1.hex -V -F -C"C:\arduino\hardware\tools\avr\etc\avrdude.conf"
 SERIAL_AVRDUDE = avrdude
 SERIAL_AVRDUDE_CONFIG = /etc/avrdude.conf
 SERIAL_AVRDUDE_PORT = /dev/ttyUSB0
