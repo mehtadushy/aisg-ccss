@@ -49,6 +49,7 @@ class IMU(object):
     self.tx_thread.start()
     
   def stop(self):
+    self.dev.write('\n')
     self.alive = False
     self.dev.flushOutput()
     self.dev.flushInput()
