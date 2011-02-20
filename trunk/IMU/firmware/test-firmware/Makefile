@@ -194,9 +194,9 @@ LDFLAGS += $(PRINTF_LIB) $(SCANF_LIB) $(MATH_LIB)
 #---------------- Programming Options (avrdude serial bootloader) ----------------
 
 #"C:\arduino\hardware\tools\avr\bin\avrdude" -PCOM3 -c stk500v1 -patmega168 -b19200 -Uflash:w:Simon-PTH-v1.hex -V -F -C"C:\arduino\hardware\tools\avr\etc\avrdude.conf"
-SERIAL_AVRDUDE = C:\WinAVR-20100110\bin\avrdude.exe
-SERIAL_AVRDUDE_CONFIG = C:\WinAVR-20100110\bin\avrdude.conf
-SERIAL_AVRDUDE_PORT = COM4
+SERIAL_AVRDUDE = avrdude
+SERIAL_AVRDUDE_CONFIG = /etc/avrdude.conf
+SERIAL_AVRDUDE_PORT = /dev/ttyUSB0
 SERIAL_AVRDUDE_SPEED = 57600
 SERIAL_AVRDUDE_PROGRAMMER = stk500v1
 
@@ -219,7 +219,7 @@ AVRDUDE_PROGRAMMER = stk500v1
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
 #AVRDUDE_PORT = lpt1
-AVRDUDE_PORT = COM5
+AVRDUDE_PORT = /dev/ttyUSB0
 
 AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
@@ -403,7 +403,7 @@ gccversion :
 
 # Program the device.  
 program: $(TARGET).hex $(TARGET).eep
-	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
+	$(AVRDUDE) $(SERIAL_AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
 
 program_stk500: $(TARGET).hex $(TARGET).eep
 	$(STK500_PATH)\$(STK500) $(STK500_FLAGS) $(STK500_WRITE_FLASH)
