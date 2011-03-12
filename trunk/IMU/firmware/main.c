@@ -102,6 +102,7 @@ const char mag[] PROGMEM = "[2]Magnetometer: HMC5843 \n\r";
 const char gyro[] PROGMEM = "[3]Gyroscope: LPR530 and LY530 \n\r";
 const char raw_out[] PROGMEM = "[4]Raw Output\n\r";
 const char baud_change[] PROGMEM = "[5]Change Baud Rate: ";
+const char accel_gyro[] PROGMEM = "[6]High Speed Accel+Gyro\n\r";
 const char autorun[] PROGMEM = "[Ctrl+z]Toggle Autorun\n\r";
 const char help_[] PROGMEM = "[?]Help\n\r";
 
@@ -347,6 +348,7 @@ void config_menu(void)
 	printf_P(raw_out);
 	printf_P(baud_change);
 	printf("%ldbps\n\r", baud);
+	printf_P(accel_gyro);
 	printf_P(autorun);
 	printf_P(help_);
 	
@@ -396,7 +398,9 @@ void config_read(void)
 			}
 			if(choice=='6')
 			{
+				printf("SYNC\n\r");
 				while(!(UCSR0A & (1 << RXC0))) raw_accel_gyro();
+				config_menu();
 			}
 			if(choice==0x10) //if ctrl-p
 			{
@@ -967,7 +971,22 @@ void raw_accel_gyro(void)
 	uint16_t yg = y_gyro();
 	uint16_t zg = z_gyro();
 	
-	
+		
+		put_char(xa);
+		put_char(xa>>8);
+		put_char(ya);
+		put_char(ya>>8);
+		put_char(za);
+		put_char(za>>8);
+		put_char(xg);
+		put_char(xg>>8);
+		put_char(yg);
+		put_char(yg>>8);
+		put_char(zg);
+		put_char(zg>>8);
+		
+		//printf("%u %u %u %u %u %u\n",xa,ya,za,xg,yg,zg);
+		//printf("%d %d %d %d %d %d\n",xa,ya,za,xg,yg,zg);
 }
 
 /*********************

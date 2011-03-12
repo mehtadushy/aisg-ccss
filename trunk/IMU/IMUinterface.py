@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import threading, sys, os
+import struct
 import serial
 
 class IMUConnectError(Exception):
@@ -28,6 +29,7 @@ class IMU(object):
     self.alive = False
     self.dev.flushOutput()
     self.dev.flushInput()
+    self.sync_flag = False
     
   def scan_device(self):
     sys.stderr.write('No Arguments provided...\nScanning for device...\n')
@@ -58,8 +60,19 @@ class IMU(object):
   def read(self):
     try:
       while self.alive:
+        if self.sync_flag:
+          data = self.dev.readline(12)
+          try:
+            udata = struct.unpack('>hhhhhh',data)
+            self.output.write(str(udata)+'\n')
+          except Exception,e:
+            print e
+          continue
         data = self.dev.readline()
         if data == '': continue
+        if data.rfind('SYNC')!= -1:
+          self.sync_flag = True
+
         self.output.write(data)
         self.current_reading = data
         self.log.write(data)
@@ -75,8 +88,12 @@ class IMU(object):
       while self.alive:
         data = self.input.read(1)
         try:
-          if data == 'c': self.stop()
-          if data == 'r': self.dev.write('\n')
+          if data == 'c': 
+            self.sync_flag = False
+            self.stop()
+          if data == 'r': 
+            self.sync_flag = False
+            self.dev.write('\n')
           data=int(data)
         except: continue
         self.dev.write(str(data))
