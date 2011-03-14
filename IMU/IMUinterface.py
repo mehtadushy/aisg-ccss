@@ -3,6 +3,7 @@
 import threading, sys, os
 import struct
 import serial
+import time
 
 class IMUConnectError(Exception):
   def __init__(self):
@@ -30,6 +31,8 @@ class IMU(object):
     self.dev.flushOutput()
     self.dev.flushInput()
     self.sync_flag = False
+    self.time = 0
+    self.log_flag= False
     
   def scan_device(self):
     sys.stderr.write('No Arguments provided...\nScanning for device...\n')
@@ -60,11 +63,17 @@ class IMU(object):
   def read(self):
     try:
       while self.alive:
+        _time = time.time()
+        _freq = 1/(_time-self.time)
+        #print _freq
+        self.time = _time
         if self.sync_flag:
-          data = self.dev.readline(12)
+          data = self.dev.read(size=14)
           try:
-            udata = struct.unpack('>hhhhhh',data)
+            udata = struct.unpack('>hhhhhhh',data)
             self.output.write(str(udata)+'\n')
+            if self.log_flag:
+              self.log.write(str(udata)[1:-1]+'\n')
           except Exception,e:
             print e
           continue
@@ -73,9 +82,9 @@ class IMU(object):
         if data.rfind('SYNC')!= -1:
           self.sync_flag = True
 
-        self.output.write(data)
+        #self.output.write(data)
         self.current_reading = data
-        self.log.write(data)
+        
     except serial.SerialException:
       self.alive = False
       raise IMUDataIOError
@@ -94,6 +103,11 @@ class IMU(object):
           if data == 'r': 
             self.sync_flag = False
             self.dev.write('\n')
+          if data == 'l':
+             if self.log_flag == True:
+               self.log_flag = False
+             else:
+               self.log_flag = True
           data=int(data)
         except: continue
         self.dev.write(str(data))
