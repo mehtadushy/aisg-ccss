@@ -398,7 +398,10 @@ void config_read(void)
 			}
 			if(choice=='6')
 			{
-				printf("SYNC\n\r");
+				printf("SYNC\n");
+				TIMSK1 = 0x00;
+				TCNT1 = 0x0000;
+				TCCR1B = 0x01;
 				while(!(UCSR0A & (1 << RXC0))) raw_accel_gyro();
 				config_menu();
 			}
@@ -963,30 +966,51 @@ void delay_ms(uint16_t x)
 
 void raw_accel_gyro(void)
 {
+	//Note that outputing the serial data as it is being read tends to be faster
+	//than reading all the IMU data and sub outputting it!
 	uint16_t xa = x_accel();
+	put_char(xa>>8);
+	put_char(xa);
 	uint16_t ya = y_accel();
+	put_char(ya>>8);
+	put_char(ya);
 	uint16_t za = z_accel();
+	put_char(za>>8);
+	put_char(za);
 	
 	uint16_t xg = x_gyro();
+	put_char(xg>>8);
+	put_char(xg);
 	uint16_t yg = y_gyro();
+	put_char(yg>>8);
+	put_char(yg);
 	uint16_t zg = z_gyro();
+	put_char(zg>>8);
+	put_char(zg);
 	
-		
-		put_char(xa);
+	unsigned char sreg = SREG;
+	asm volatile("cli");
+	TCCR1B = 0x00;
+	uint16_t i= TCNT1;
+	SREG = sreg;
+	TCNT1 = 0x0000;
+	TCCR1B = 0x01;
+	put_char(i>>8);
+	put_char(i);
+	/*
 		put_char(xa>>8);
-		put_char(ya);
+		put_char(xa);
 		put_char(ya>>8);
-		put_char(za);
+		put_char(ya);
 		put_char(za>>8);
-		put_char(xg);
+		put_char(za);
 		put_char(xg>>8);
-		put_char(yg);
+		put_char(xg);
 		put_char(yg>>8);
-		put_char(zg);
+		put_char(yg);
 		put_char(zg>>8);
-		
-		//printf("%u %u %u %u %u %u\n",xa,ya,za,xg,yg,zg);
-		//printf("%d %d %d %d %d %d\n",xa,ya,za,xg,yg,zg);
+		put_char(zg);
+		*/
 }
 
 /*********************
