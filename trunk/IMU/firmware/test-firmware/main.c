@@ -151,14 +151,25 @@ void accelerometer_init(void)
 	i2cSendByte(0x08);    //full resolution
 	i2cWaitForComplete();
 	i2cSendStop();
+	
+	
+	i2cSendStart();
+	i2cWaitForComplete();
+	i2cSendByte(0xA6);    //write to ADXL
+	i2cWaitForComplete();
+	i2cSendByte(0x2C);    //speed
+	i2cWaitForComplete();
+	i2cSendByte(0x0B);    //rate bits
+	i2cWaitForComplete();
+	i2cSendStop();
 
 }
 
 void adxl345(void)
 {	
 	printf("x=%4d, ", x_accel());
-	printf("y=%4d, ", y_accel());
-	printf("z=%4d \n\r", z_accel());
+	//printf("y=%4d, ", y_accel());
+	//printf("z=%4d \n\r", z_accel());
 	//delay_ms(20);
 }
 
@@ -389,8 +400,9 @@ void config_read(void)
 			}
 			if(choice=='5')
 			{
-				baud_menu();
-				config_menu();
+				
+				//_menu();
+				//config_menu();
 			}
 			if(choice==0x10) //if ctrl-p
 			{
@@ -992,7 +1004,7 @@ unsigned char read_from_EEPROM(unsigned int Address)
 void i2cInit(void)
 {
 	// set i2c bit rate to 40KHz
-	i2cSetBitrate(100);
+	i2cSetBitrate(200);
 	// enable TWI (two-wire interface)
 	sbi(TWCR, TWEN);
 }
