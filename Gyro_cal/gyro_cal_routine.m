@@ -31,8 +31,8 @@ for i= 1 : 5004
         dat(i,8)= s;  % mark as stationary
         stat= [stat i]; % Log instances of stationarity 
         %Compute orientation
-        dat(i,9)= asin(dat(i,1)/980.0)*(180/pi); % Compute pitch
-        dat(i,10)=atan(dat(i,2)/dat(i,3))*(180/pi); % Compute roll
+        dat(i,9)= asin(dat(i,1)/980.0)*(180/pi); % Compute roll
+        dat(i,10)=atan(dat(i,2)/dat(i,3))*(180/pi); % Compute pitch
     else
         dat(i,1:3)=[0 0 0];
     end
