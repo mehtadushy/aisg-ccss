@@ -1,13 +1,13 @@
 clc;
 clear all;
 %Scale
-kx=3.0;      %roll
-ky=3.0;      %pitch
-kz=3.0;      %yaw
+kx=-80.0;      %roll
+ky=80.0;      %pitch
+kz=80.0;      %yaw
 %Bias
-bx=37.0;
-by=37.0;
-bz=37.0;
+bx=340.0;
+by=340.0;
+bz=340.0;
 cd ('F:\Gyro_cal');
 global dat;
 dat= csvread('IMUoutput.txt');
