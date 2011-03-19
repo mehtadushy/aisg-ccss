@@ -8,7 +8,7 @@ kz=30.0;      %yaw
 bx=370.0;
 by=370.0;
 bz=370.0;
-%  cd ('F:\Gyro_cal');    % Current Directory
+cd ('F:\Gyro_cal');
 global dat;
 dat= csvread('IMUoutput.txt');
 dat(:,2)= dat(:,2)+15.0;  %Acc bias correction
@@ -29,18 +29,19 @@ for i= 1 : 5004
     if ((mag(i,1)>978.0) && (mag(i,1)<982.0) && (dat(i-1,1)==0) && (dat (i-1,3)==0) && (dat (i-2,2)==0))
         s=s+1;
         dat(i,8)= s;  % mark as stationary
-        stat= [stat i];
+        stat= [stat i]; % Log instances of stationarity 
+        %Compute orientation
         dat(i,9)= asin(dat(i,1)/980.0); % Find pitch
         dat(i,10)=atan(dat(i,2)/dat(i,3)); % Find roll
     else
         dat(i,1:3)=[0 0 0];
-       
     end
     
 end
 
 thet=[kx; ky; kz; bx; by; bz ];
 thet_0 = thet;
-lbthet=[0; 0; 0; 280; 280; 280;];
-ubther=[2*pi/180; 2*pi/180; 2*pi/180; 380; 380; 380];
-thet= lsqnonlin(@func1, thet_0,lbthet,ubthet);
+lbthet=[];
+ubthet=[];
+options= optimset('TolFun',1e-8,'TolX',1e-8);
+thet= lsqnonlin(@func1, thet_0, lbthet, ubthet, options);
