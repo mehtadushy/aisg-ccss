@@ -1,13 +1,13 @@
 clc;
 clear all;
 %Scale
-kx=30.0;      %roll
-ky=30.0;      %pitch
-kz=30.0;      %yaw
+kx=3.0;      %roll
+ky=3.0;      %pitch
+kz=3.0;      %yaw
 %Bias
-bx=370.0;
-by=370.0;
-bz=370.0;
+bx=37.0;
+by=37.0;
+bz=37.0;
 cd ('F:\Gyro_cal');
 global dat;
 dat= csvread('IMUoutput.txt');
@@ -31,8 +31,8 @@ for i= 1 : 5004
         dat(i,8)= s;  % mark as stationary
         stat= [stat i]; % Log instances of stationarity 
         %Compute orientation
-        dat(i,9)= asin(dat(i,1)/980.0); % Find pitch
-        dat(i,10)=atan(dat(i,2)/dat(i,3)); % Find roll
+        dat(i,9)= asin(dat(i,1)/980.0)*(180/pi); % Find pitch
+        dat(i,10)=atan(dat(i,2)/dat(i,3))*(180/pi); % Find roll
     else
         dat(i,1:3)=[0 0 0];
     end
