@@ -1,13 +1,13 @@
 clc;
 clear all;
 %Scale
-kx=0.90;      %roll
-ky=0.90;      %pitch
-kz=0.90;      %yaw
+kx=0.98;      %roll
+ky=0.98;      %pitch
+kz=0.98;      %yaw
 %Bias
-bx=360.01;
-by=360.01;
-bz=360.01;
+bx=368;
+by=3480;
+bz=350;
 cd ('F:\Gyro_cal');
 global dat;
 dat= csvread('IMUoutput.txt');
@@ -55,5 +55,5 @@ thet=[kx; ky; kz; bx; by; bz ];
 thet_0 = thet;
 lbthet=[0; 0; 0; 330; 330; 330];
 ubthet=[1.5; 1.5; 1.5; 390; 390; 390];
-options= optimset('TolFun',1e-8,'TolX',1e-8, 'MaxFunEvals', 1200);
+options= optimset('TolFun',1e-8,'TolX',1e-8, 'MaxFunEvals', 600);
 thet= lsqnonlin(@func1, thet_0, lbthet, ubthet, options);
