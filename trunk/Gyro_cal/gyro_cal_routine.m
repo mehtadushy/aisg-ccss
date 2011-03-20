@@ -1,13 +1,13 @@
 clc;
 clear all;
 %Scale
-kx=1.0;      %roll
-ky=1.0;      %pitch
-kz=1.0;      %yaw
+kx=0.90;      %roll
+ky=0.90;      %pitch
+kz=0.90;      %yaw
 %Bias
-bx=370.0;
-by=370.0;
-bz=370.0;
+bx=360.01;
+by=360.01;
+bz=360.01;
 cd ('F:\Gyro_cal');
 global dat;
 dat= csvread('IMUoutput.txt');
@@ -31,8 +31,20 @@ for i= 1 : 5004
         dat(i,8)= s;  % mark as stationary
         stat= [stat i]; % Log instances of stationarity 
         %Compute orientation
-        dat(i,9)= asin(dat(i,1)/980.0)*(180/pi); % Compute roll
-        dat(i,10)=atan(dat(i,2)/dat(i,3))*(180/pi); % Compute pitch
+        dat(i,9)= asin(dat(i,1)/980.0)*(180/pi); % Compute pitch
+        if (dat(i,2)<0)
+            if (dat(i,3)<0)
+              dat(i,10)=atan(abs(dat(i,2)/dat(i,3)))*(180/pi); % Compute roll
+            else
+              dat(i,10)=(180) - atan(abs(dat(i,2)/dat(i,3)))*(180/pi);
+            end
+        else
+            if (dat(i,3)<0)
+              dat(i,10)=-atan(abs(dat(i,2)/dat(i,3)))*(180/pi); % Compute roll
+            else
+              dat(i,10)=(-180) + atan(abs(dat(i,2)/dat(i,3)))*(180/pi);
+            end 
+        end
     else
         dat(i,1:3)=[0 0 0];
     end
@@ -41,7 +53,7 @@ end
 
 thet=[kx; ky; kz; bx; by; bz ];
 thet_0 = thet;
-lbthet=[];
-ubthet=[];
+lbthet=[0; 0; 0; 330; 330; 330];
+ubthet=[1.5; 1.5; 1.5; 390; 390; 390];
 options= optimset('TolFun',1e-8,'TolX',1e-8, 'MaxFunEvals', 1200);
 thet= lsqnonlin(@func1, thet_0, lbthet, ubthet, options);
