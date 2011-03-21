@@ -1,11 +1,11 @@
 clc;
 clear all;
 %Scale
-kx=1.7;      %roll
-ky=4.78;      %pitch
-kz=7.78;      %yaw
+kx=0.82;      %roll
+ky=0.8;      %pitch
+kz=0.8;      %yaw
 %Bias
-bx=368;
+bx=350;
 by=348;
 bz=350;
 cd ('F:\Gyro_cal');
@@ -53,7 +53,8 @@ end
 
 thet=[kx; ky; kz; bx; by; bz ];
 thet_0 = thet;
-lbthet=[0; 0; 0; 330; 330; 330];
+lbthet=[-1.5; -1.5; -1.5; -390; -390; -390];
 ubthet=[1.5; 1.5; 1.5; 390; 390; 390];
-options= optimset('TolFun',1e-8,'TolX',1e-8, 'MaxFunEvals', 600);
+%options= optimset('TolFun',1e-8,'TolX',1e-8, 'MaxFunEvals', 1200);
+options= optimset('MaxFunEvals', 1200);
 thet= lsqnonlin(@func1, thet_0, lbthet, ubthet, options);
