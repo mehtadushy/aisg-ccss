@@ -1,12 +1,12 @@
 clc;
 clear all;
 %Scale
-kx=0.98;      %roll
-ky=0.98;      %pitch
-kz=0.98;      %yaw
+kx=1.7;      %roll
+ky=4.78;      %pitch
+kz=7.78;      %yaw
 %Bias
 bx=368;
-by=3480;
+by=348;
 bz=350;
 cd ('F:\Gyro_cal');
 global dat;
@@ -26,7 +26,7 @@ for i= 1 : 5004
     mag(i,1)= sqrt(mag(i,1));
     % Check for stationarity, and choose one point admist consequitive
     % stationary positions
-    if ((mag(i,1)>978.0) && (mag(i,1)<982.0) && (dat(i-1,1)==0) && (dat (i-1,3)==0) && (dat (i-2,2)==0))
+    if ((mag(i,1)>978.0) && (mag(i,1)<982.0) && (dat(i,4)<450) && (dat(i,5)<450) &&(dat(i,6)<450)&& (dat(i,4)>290) && (dat(i,5)>290) &&(dat(i,6)>290)&&(dat(i-1,1)==0) && (dat (i-1,3)==0) && (dat (i-2,2)==0))
         s=s+1;
         dat(i,8)= s;  % mark as stationary
         stat= [stat i]; % Log instances of stationarity 
