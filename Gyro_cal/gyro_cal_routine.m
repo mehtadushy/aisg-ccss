@@ -1,14 +1,16 @@
 clc;
 clear all;
 %Scale
-kx=0.82;      %roll
-ky=0.8;      %pitch
-kz=0.8;      %yaw
+kx=0.90;      %roll
+ky=0.903;      %pitch
+kz=0.895;      %yaw
 %Bias
-bx=350;
-by=348;
-bz=350;
-cd ('F:\Gyro_cal');
+global bx;
+global by;
+global bz;
+bx=380;
+by=362;
+bz=378;
 global dat;
 dat= csvread('IMUoutput.txt');
 dat(:,2)= dat(:,2)+15.0;  %Acc bias correction
@@ -20,13 +22,17 @@ dat(:,7)= dat(:,7)/8000.0;  %Time in ms
 dat= [dat zeros(5004,3)]; %Stationary, pitch and roll
 s=0;
 global stat;
+global roll;
+global pitch;
+roll= zeros(5004,1);
+pitch= zeros(5004,1);
 stat=[0];
 for i= 1 : 5004
     mag(i,1)= (dat(i,1)^2) + (dat(i,2)^2) + (dat(i,3)^2);
     mag(i,1)= sqrt(mag(i,1));
     % Check for stationarity, and choose one point admist consequitive
     % stationary positions
-    if ((mag(i,1)>978.0) && (mag(i,1)<982.0) && (dat(i,4)<450) && (dat(i,5)<450) &&(dat(i,6)<450)&& (dat(i,4)>290) && (dat(i,5)>290) &&(dat(i,6)>290)&&(dat(i-1,1)==0) && (dat (i-1,3)==0) && (dat (i-2,2)==0))
+    if ((mag(i,1)>976.0) && (mag(i,1)<984.0) && (dat(i,4)<500) && (dat(i,5)<500) &&(dat(i,6)<500)&& (dat(i,4)>200) && (dat(i,5)>200) &&(dat(i,6)>200)&&(dat(i-1,1)==0) && (dat (i-1,3)==0) && (dat (i-2,2)==0))
         s=s+1;
         dat(i,8)= s;  % mark as stationary
         stat= [stat i]; % Log instances of stationarity 
@@ -51,10 +57,13 @@ for i= 1 : 5004
     
 end
 
-thet=[kx; ky; kz; bx; by; bz ];
+roll=dat(:,10);
+pitch=dat(:,9);
+
+thet=[kx; ky; kz];
 thet_0 = thet;
-lbthet=[-1.5; -1.5; -1.5; -390; -390; -390];
-ubthet=[1.5; 1.5; 1.5; 390; 390; 390];
-%options= optimset('TolFun',1e-8,'TolX',1e-8, 'MaxFunEvals', 1200);
-options= optimset('MaxFunEvals', 1200);
+lbthet=[0.75; 0.75; 0.75];
+ubthet=[0.95; 0.95; 0.95];
+options= optimset('TolFun',1e-8,'TolX',1e-8, 'MaxFunEvals', 2500, 'MaxIter', 2000);
+%options= optimset('MaxFunEvals', 1200);
 thet= lsqnonlin(@func1, thet_0, lbthet, ubthet, options);
