@@ -1,6 +1,6 @@
 clc;
 clear all;
-%warning off all;
+warning off all;
 %Scale
 kx=0.89;      %roll
 ky=0.8973;      %pitch
@@ -42,9 +42,9 @@ while m<5004
         
         stat= [stat m]; % Log instances of stationarity 
         %Compute orientation
-        dat(m,9)= real(asin(dat(m,1)/980.0)); % Compute pitch
-        dat(m,10)=real(atan2(dat(m,2),dat(m,3))); % Compute roll
-        quat(:,m)= [real(cos(dat(m,10)/2)* cos(dat(m,9)/2)); real(sin(dat(m,10)/2)*cos(dat(m,9)/2)); real(cos(dat(m,10)/2)*sin(dat(m,9)/2)); 0.0];
+        dat(m,9)= asin(dat(m,1)/980.0); % Compute pitch
+        dat(m,10)=atan2(dat(m,2),dat(m,3)); % Compute roll
+        quat(:,m)= [real(cos(dat(m,10)/2)* cos(dat(m,9)/2)); real(sin(dat(m,10)/2)*cos(dat(m,9)/2)); real(cos(dat(m,10)/2)*sin(dat(m,9)/2)); -(sin(dat(m,10)/2)*sin(dat(m,9)/2))];
         
         m=m+25;
     else
