@@ -4,14 +4,13 @@ clear all;
 kx=0.92;      %roll
 ky=0.92;      %pitch
 kz=0.92;      %yaw
-
 %Bias
 global bx;
 global by;
 global bz;
-bx=380;
-by=372;
-bz=379;
+bx=386;
+by=369;
+bz=377;
 global dat;
 dat= csvread('IMUoutput.txt');
 dat(:,2)= dat(:,2)+15.0;  %Acc bias correction
@@ -67,13 +66,13 @@ pitch=dat(:,9);
 thet=[kx; ky; kz];
 thet_0 = thet;
 lbthet=[0.85; 0.85; 0.85];
-ubthet=[.98; 0.98; 0.98];
+ubthet=[.98; .98; .98];
 %options= optimset('Display','iter','TolFun',1e-1,'TolX',1e-2, 'MaxFunEvals', 1200, 'MaxIter', 1000);
 %options= optimset('MaxFunEvals', 1200);
 %thet= lsqnonlin(@func1, thet_0, lbthet, ubthet, options);
 
-
-problem = createOptimProblem('fmincon','objective',@func1,'x0',thet_0,'lb',lbthet,'ub',ubthet);
+options= optimset('TolX',1e-3);
+problem = createOptimProblem('fmincon','objective',@func1,'x0',thet_0,'lb',lbthet,'ub',ubthet,'options',options);
 gs = GlobalSearch;
-[thet fg flg og] = run(gs,problem);
+[thet fg flg og sols] = run(gs,problem);
 
