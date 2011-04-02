@@ -1,9 +1,9 @@
 clc;
 clear all;
 %Scale
-kx=0.92;      %roll
-ky=0.92;      %pitch
-kz=0.92;      %yaw
+kx=0.9;      %roll
+ky=0.9;      %pitch
+kz=0.9;      %yaw
 %Bias
 global bx;
 global by;
@@ -65,8 +65,8 @@ pitch=dat(:,9);
 
 thet=[kx; ky; kz];
 thet_0 = thet;
-lbthet=[0.85; 0.85; 0.85];
-ubthet=[.98; .98; .98];
+lbthet=[0.88; 0.88; 0.88];
+ubthet=[.95; .95; .95];
 %options= optimset('Display','iter','TolFun',1e-1,'TolX',1e-2, 'MaxFunEvals', 1200, 'MaxIter', 1000);
 %options= optimset('MaxFunEvals', 1200);
 %thet= lsqnonlin(@func1, thet_0, lbthet, ubthet, options);
