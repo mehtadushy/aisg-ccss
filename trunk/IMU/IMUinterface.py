@@ -15,8 +15,7 @@ class IMUDataIOError(IOError):
 
 class IMU(object):
   def __init__(self,device = '',log_file = 'IMUoutput.txt'):
-    
-    NULL = open('/dev/null','w+')
+    #NULL = open('/dev/null','w+')
     self.input = sys.stdin
     self.output = sys.stdout
     #comment below to see the output on stdout
@@ -63,15 +62,16 @@ class IMU(object):
   def read(self):
     try:
       while self.alive:
-        _time = time.time()
-        _freq = 1/(_time-self.time)
+        #_time = time.time()
+        #_freq = 1/(_time-self.time)
         #print _freq
-        self.time = _time
+        #self.time = _time
         if self.sync_flag:
           data = self.dev.read(size=14)
           try:
             udata = struct.unpack('>hhhhhhh',data)
-            self.output.write(str(udata)+'\n')
+            #self.output.write(str(udata)+'\n')
+            self.process(udata)
             if self.log_flag:
               self.log.write(str(udata)[1:-1]+'\n')
           except Exception,e:
@@ -115,10 +115,13 @@ class IMU(object):
       self.alive = False
       raise IMUDataIOError
     
+  def process(self,data):
+      self.data = list(data)
+
 if __name__ == '__main__':
   try:
     if sys.argv[1]:
       imu=IMU(device=sys.argv[1])
-  except Exception:
-    imu=IMU()
-  imu.start()
+      imu.start()
+  except Exception,e:
+      print 'Port error: ' + str(e)
